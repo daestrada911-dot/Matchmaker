@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>❤ Matchmaker for the Web ❤</title>
+  <meta name="description" content="A playful compatibility tester that compares your answers to my 'true love' profile.">
+  <style>
+    /* =============================
+       THEME & DESIGN TOKENS (Req 4)
+       ============================= */
+    :root{
+      --bg-0:#0b1020;       /* page backdrop */
+      --bg-1:#12193a;       /* card background */
+      --bg-2:#17204a;       /* input rows */
+      --txt-0:#ecf0ff;      /* primary text */
+      --txt-1:#c6ccff;      /* secondary text */
+      --brand:#ff5e8a;      /* pink hearts */
+      --accent:#7cf3ff;     /* cyan accents */
+      --ok:#67e480;         /* success */
+      --warn:#ffd166;       /* warning */
+      --bad:#ff6b6b;        /* error */
+      --muted:#232b57;      /* divider */
+      --radius:18px;
+      --shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Inter, "Noto Sans", Arial, sans-serif;
+      color:var(--txt-0); background:radial-gradient(1200px 800px at 10% -10%, #1e2a6f 0%, transparent 60%),
+                           radial-gradient(1000px 600px at 110% 10%, #2a194f 0%, transparent 60%), var(--bg-0);
+    }
+    header{max-width:900px; margin:32px auto 16px; padding:0 16px}
+    h1{font-size:clamp(28px,4vw,44px); margin:0 0 10px; letter-spacing:.5px}
+    .subtitle{color:var(--txt-1); margin:0}
+
+    .card{
+      max-width:900px; margin:16px auto; background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); box-shadow:var(--shadow);
+      padding:18px; backdrop-filter: blur(8px);
+    }
+
+    .instructions{
+      display:grid; gap:8px; grid-template-columns: 24px 1fr; align-items:start; color:var(--txt-1);
+    }
+    .instructions .emoji{font-size:20px; line-height:24px}
+    .divider{height:1px; background:var(--muted); margin:14px 0}
+
+    form{display:grid; gap:14px}
+    .q{
+      background:var(--bg-2); border:1px solid rgba(255,255,255,.06); border-radius:14px; padding:14px;
+      display:grid; gap:10px;
+    }
+    .q-title{font-weight:600}
+    .controls{display:grid; grid-template-columns: 1fr auto; align-items:center; gap:12px}
+    input[type="range"]{width:100%}
+    .value-badge{
+      min-width:44px; text-align:center; padding:6px 10px; border-radius:999px; background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.1); font-weight:600
+    }
+    .error{color:var(--bad); font-size:.95rem; display:none}
+
+    .actions{display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:flex-start}
+    button{
+      appearance:none; border:0; padding:12px 18px; border-radius:999px;
+      background:linear-gradient(180deg, var(--brand), #ff3b73); color:white; font-weight:700; letter-spacing:.3px;
+      cursor:pointer; box-shadow:0 8px 20px rgba(255,94,138,.35); transition:transform .08s ease;
+    }
+    button:hover{transform:translateY(-1px)}
+    button.secondary{background:linear-gradient(180deg, #627bff, #4a61ff); box-shadow:0 8px 20px rgba(98,123,255,.3)}
+
+    .results{
+      display:none; margin-top:8px; border:1px dashed rgba(255,255,255,.2); border-radius:14px; padding:14px;
+    }
+    .score-ring{width:160px; height:160px; display:grid; place-items:center; margin:auto}
+    .score-ring circle{fill:none; stroke-width:12}
+    .score-ring .bg{stroke:rgba(255,255,255,.15)}
+    .score-ring .fg{stroke:var(--accent); stroke-linecap:round; transition:stroke-dashoffset .5s ease}
+    .score-number{position:relative; margin-top:-130px; text-align:center; font-size:34px; font-weight:800}
+
+    .summary{display:grid; gap:10px; margin-top:6px}
+    .summary-row{display:grid; grid-template-columns: auto 1fr auto; gap:10px; align-items:center}
+    .bar{height:10px; background:rgba(255,255,255,.12); border-radius:999px; overflow:hidden}
+    .bar > span{display:block; height:100%; width:0%; background:linear-gradient(90deg, var(--accent), #62ffd1)}
+
+    .remark{font-size:1.1rem; font-weight:700; margin-top:8px}
+    .remark.love{color:var(--ok)}
+    .remark.friend{color:var(--warn)}
+    .remark.run{color:var(--bad)}
+
+    footer{max-width:900px; margin:10px auto 40px; padding:0 16px; color:var(--txt-1); font-size:.95rem}
+    a{color:var(--accent)}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>❤ Matchmaker for the Web</h1>
+    <p class="subtitle">Answer five statements from 1 (strongly disagree) to 5 (strongly agree). We’ll compare your answers to my <em>ideal match</em> and score our compatibility.</p>
+  </header>
+
+  <main class="card" role="main">
+    <section class="instructions" aria-label="Instructions">
+      <div class="emoji">📝</div>
+      <div>Move each slider to your opinion (1–5). Then click <strong>Calculate Match</strong>. You’ll see per‑question compatibility, an overall score, and a closing remark. Errors will show under any question that needs fixing.</div>
+      <div class="emoji">🔒</div>
+      <div>We validate inputs (1–5 only) and show helpful messages without losing your answers.</div>
+    </section>
+
+    <div class="divider" role="separator" aria-hidden="true"></div>
+
+    <form id="matchForm" novalidate>
+      <!-- Questions will be injected here by JS -->
+      <div class="actions">
+        <button type="submit" id="calcBtn">Calculate Match</button>
+        <button type="button" class="secondary" id="resetBtn" title="Reset all answers">Reset</button>
+      </div>
+
+      <section id="results" class="results" aria-live="polite">
+        <div class="score-ring" aria-hidden="true">
+          <svg viewBox="0 0 120 120">
+            <circle class="bg" cx="60" cy="60" r="50"></circle>
+            <circle class="fg" cx="60" cy="60" r="50" stroke-dasharray="314" stroke-dashoffset="314"></circle>
+          </svg>
+          <div id="scoreNumber" class="score-number">0%</div>
+        </div>
+
+        <div id="remark" class="remark">&nbsp;</div>
+
+        <div class="divider" role="separator" aria-hidden="true"></div>
+
+        <div class="summary" id="perQuestionSummary">
+          <!-- Per-question bars injected here -->
+        </div>
+      </section>
+    </form>
+  </main>
+
+  <footer>
+    <p><strong>How it works:</strong> For each question we compute the absolute difference between your answer and my ideal (0–4). We sum across five questions (0–20), normalize to percent, and subtract from 100 for the final compatibility.</p>
+    <p>Host on GitHub Pages: create a repo named <code>matchmaker</code> (or any name), add this <code>index.html</code>, commit → Settings → Pages → Deploy from <em>main</em>. Your site will be live in ~1–2 minutes.</p>
+  </footer>
+
+  <script>
+    // =============================
+    // CONSTANTS (Req 4)
+    // =============================
+    const QUESTIONS = [
+      { id: 'q1', text: 'Pineapple absolutely belongs on pizza.', ideal: 5 },
+      { id: 'q2', text: 'I prefer late‑night coding over early mornings.', ideal: 4 },
+      { id: 'q3', text: 'Weekend hikes > staying indoors.', ideal: 3 },
+      { id: 'q4', text: 'I love spontaneous road trips.', ideal: 4 },
+      { id: 'q5', text: 'Broccoli is delicious.', ideal: 1 },
+    ];
+
+    // Thresholds for the closing remark (Req 1/3)
+    const THRESHOLDS = Object.freeze({
+      TRUE_LOVE: 85,
+      FRIEND: 60,
+      RUN_AWAY: 0
+    });
+
+    const MAX_PER_Q_DIFF = 4;  // answers in [1..5] ⇒ |diff| ∈ [0..4]
+    const TOTAL_MAX_DIFF = MAX_PER_Q_DIFF * QUESTIONS.length; // 20
+
+    // =============================
+    // RENDER QUESTIONS
+    // =============================
+    const form = document.getElementById('matchForm');
+
+    function renderQuestions(){
+      QUESTIONS.forEach((q, idx) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'q';
+        wrap.id = `wrap-${q.id}`;
+        wrap.innerHTML = `
+          <div class="q-title">${idx+1}. ${q.text} <span aria-hidden="true" title="Ideal answer">(❤ ideal: ${q.ideal})</span></div>
+          <div class="controls">
+            <input aria-label="${q.text}" type="range" min="1" max="5" step="1" value="3" id="${q.id}" name="${q.id}">
+            <span class="value-badge" id="badge-${q.id}">3</span>
+          </div>
+          <div class="error" id="err-${q.id}">Please choose a number from 1 to 5.</div>
+        `;
+        form.insertBefore(wrap, form.querySelector('.actions'));
+        const input = wrap.querySelector('input');
+        const badge = wrap.querySelector('.value-badge');
+        input.addEventListener('input', () => badge.textContent = input.value);
+      });
+    }
+
+    renderQuestions();
+
+    // =============================
+    // VALIDATION (Req 3 & Req 4)
+    // Single validate() function used for all questions
+    // =============================
+    function validate(){
+      let ok = true;
+      QUESTIONS.forEach(q => {
+        const input = document.getElementById(q.id);
+        const err = document.getElementById(`err-${q.id}`);
+        const val = Number(input.value);
+        const valid = Number.isFinite(val) && val >= 1 && val <= 5 && Number.isInteger(val);
+        if(!valid){
+          ok = false;
+          err.style.display = 'block';
+          input.setAttribute('aria-invalid', 'true');
+        } else {
+          err.style.display = 'none';
+          input.removeAttribute('aria-invalid');
+        }
+      });
+      return ok;
+    }
+
+    // Make validate() globally available per spec naming
+    window.validate = validate;
+
+    // =============================
+    // SCORING HELPERS (Req 2 & 3)
+    // =============================
+    function perQuestionCompatibility(user, ideal){
+      const diff = Math.abs(user - ideal);             // 0..4
+      const pct = Math.round((1 - diff / MAX_PER_Q_DIFF) * 100); // 100..0
+      return { diff, pct };
+    }
+
+    function computeOverall(percentages){
+      // Another way would be 100 - (sumDiff/TOTAL_MAX_DIFF)*100; both equivalent
+      const sum = percentages.reduce((a,b)=>a+b,0); // 0..500
+      return Math.round(sum / percentages.length);  // 0..100
+    }
+
+    function closingRemark(score){
+      if(score >= THRESHOLDS.TRUE_LOVE) return { text: `TRUE LOVE! ${String.fromCodePoint(0x1F60D)} We\'re cosmic!`, cls: 'love' };
+      if(score >= THRESHOLDS.FRIEND) return { text: `Friends with potential ${String.fromCodePoint(0x1F60A)} Coffee first?`, cls: 'friend' };
+      return { text: `Run away! ${String.fromCodePoint(0x1F3C3)} Maybe we keep this strictly Wi‑Fi.`, cls: 'run' };
+    }
+
+    // =============================
+    // UI BINDINGS
+    // =============================
+    const resultsEl = document.getElementById('results');
+    const scoreNumber = document.getElementById('scoreNumber');
+    const remarkEl = document.getElementById('remark');
+    const ringFG = document.querySelector('.score-ring .fg');
+    const ringCircumference = 2 * Math.PI * 50; // r=50 ⇒ 314
+    ringFG.setAttribute('stroke-dasharray', ringCircumference);
+
+    function updateRing(percent){
+      const offset = ringCircumference * (1 - percent/100);
+      ringFG.style.strokeDashoffset = String(offset);
+    }
+
+    function showPerQuestionSummary(rows){
+      const list = document.getElementById('perQuestionSummary');
+      list.innerHTML = '';
+      rows.forEach(({label, pct}) => {
+        const row = document.createElement('div');
+        row.className = 'summary-row';
+        row.innerHTML = `
+          <div>${label}</div>
+          <div class="bar"><span style="width:${pct}%"></span></div>
+          <div><strong>${pct}%</strong></div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if(!validate()){
+        resultsEl.style.display = 'none';
+        return;
+      }
+
+      const percentages = [];
+      const summaryRows = [];
+
+      QUESTIONS.forEach((q, idx) => {
+        const user = Number(document.getElementById(q.id).value);
+        const { pct } = perQuestionCompatibility(user, q.ideal);
+        percentages.push(pct);
+        summaryRows.push({ label: `${idx+1}`, pct });
+      });
+
+      const overall = computeOverall(percentages);
+      scoreNumber.textContent = `${overall}%`;
+      updateRing(overall);
+
+      const { text, cls } = closingRemark(overall);
+      remarkEl.className = `remark ${cls}`;
+      remarkEl.textContent = text;
+
+      showPerQuestionSummary(summaryRows);
+      resultsEl.style.display = 'block';
+      resultsEl.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      QUESTIONS.forEach(q => {
+        const input = document.getElementById(q.id);
+        const badge = document.getElementById(`badge-${q.id}`);
+        const err = document.getElementById(`err-${q.id}`);
+        input.value = 3;
+        badge.textContent = '3';
+        err.style.display = 'none';
+        input.removeAttribute('aria-invalid');
+      });
+      resultsEl.style.display = 'none';
+      updateRing(0);
+      scoreNumber.textContent = '0%';
+      remarkEl.textContent = '';
+    });
+  </script>
+</body>
+</html>
