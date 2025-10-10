@@ -1,25 +1,14 @@
-# 🌐 Diego Estrada — Personal Web Playground
-Live site ➜ https://daestrada911-dot.github.io/me/
+# 🧩 Matchmaker for the Web  
 
-A lightweight space where I ship small web projects fast and practice HTML, CSS, and JavaScript. Built and iterated in VS Code, deployed with GitHub Pages.
+**Author:** Diego Estrada  
 
-![Made with: HTML, CSS, JS](https://img.shields.io/badge/Made%20with-HTML%20%7C%20CSS%20%7C%20JavaScript-informational)
-![Hosted on GitHub Pages](https://img.shields.io/badge/Hosted-GitHub%20Pages-181717)
-![Status: Live](https://img.shields.io/badge/Status-Live-brightgreen)
+This project was created as part of my web development coursework at Lewis University. The goal of this assignment was to build a fully functional **Matchmaker web app** using HTML, CSS, and JavaScript. The app asks five questions that measure compatibility and calculates how close someone’s answers are to my “ideal match.”  
 
----
-
-## ✨ What’s inside
-- **Hello World / Getting to Know Each Other** — my first page with playful UI touches.
-- **Class Project Proposal** — `index.html` with an H1 of “Class Project Proposal”.
-- **Matchmaker: Diego’s Edition** — a fun compatibility web app (sliders, scoring, thresholds).
-- **Room to Grow** — quick links and sections for future labs, notes, and demos.
-
-> Goal: keep everything simple, fast, and clean while I level up my web fundamentals and cybersecurity mindset.
+This version focused on improving structure, design, and logic — including interactive JavaScript for scoring, clean layout using CSS, and clear HTML formatting. I also validated the code through W3C and tested it across browsers to ensure functionality and accessibility.  
 
 ---
 
-## 🧰 Tech & Tools
-- **HTML5**, **CSS3**, **Vanilla JavaScript**
-- **VS Code** for editing
-- **GitHub Pages** for hosting (no build step)
+## 💡 Credits  
+- **Eric Pogue** – Original assignment template and project instructions  
+- **ChatGPT** – Support with refining code, writing logic explanations, and improving documentation  
+- **[GitHub Pages](https://pages.github.com/)** – Hosting platform for deploying the live site  
