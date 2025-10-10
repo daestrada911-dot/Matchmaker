@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>❤ Matchmaker for the Web ❤</title>
+  <title>❤ Matchmaker — Diego’s Edition ❤</title>
   <meta name="description" content="A playful compatibility tester that compares your answers to my 'true love' profile.">
   <style>
     /* =============================
@@ -15,8 +15,8 @@
       --bg-2:#17204a;       /* input rows */
       --txt-0:#ecf0ff;      /* primary text */
       --txt-1:#c6ccff;      /* secondary text */
-      --brand:#ff5e8a;      /* pink hearts */
-      --accent:#7cf3ff;     /* cyan accents */
+      --brand:#ff2734;      /* Chicago red */      /* pink hearts */
+      --accent:#6ec6ff;     /* Chicago sky blue */     /* cyan accents */
       --ok:#67e480;         /* success */
       --warn:#ffd166;       /* warning */
       --bad:#ff6b6b;        /* error */
@@ -96,8 +96,8 @@
 </head>
 <body>
   <header>
-    <h1>❤ Matchmaker for the Web</h1>
-    <p class="subtitle">Answer five statements from 1 (strongly disagree) to 5 (strongly agree). We’ll compare your answers to my <em>ideal match</em> and score our compatibility.</p>
+    <h1>❤ Matchmaker: Diego’s Edition</h1>
+    <p class="subtitle">Answer five statements from 1 (strongly disagree) to 5 (strongly agree). We’ll compare your answers to Diego’s hidden ideal match profile and score our compatibility.</p>
   </header>
 
   <main class="card" role="main">
@@ -138,7 +138,7 @@
   </main>
 
   <footer>
-    <p><strong>How it works:</strong> For each question we compute the absolute difference between your answer and my ideal (0–4). We sum across five questions (0–20), normalize to percent, and subtract from 100 for the final compatibility.</p>
+    <p><strong>How it works:</strong> For each question we compute the absolute difference between your answer and Diego’s ideal (0–4). We sum across five questions (0–20), normalize to percent, and subtract from 100 for the final compatibility.</p>
     <p>Host on GitHub Pages: create a repo named <code>matchmaker</code> (or any name), add this <code>index.html</code>, commit → Settings → Pages → Deploy from <em>main</em>. Your site will be live in ~1–2 minutes.</p>
   </footer>
 
@@ -147,17 +147,17 @@
     // CONSTANTS (Req 4)
     // =============================
     const QUESTIONS = [
-      { id: 'q1', text: 'Pineapple absolutely belongs on pizza.', ideal: 5 },
-      { id: 'q2', text: 'I prefer late‑night coding over early mornings.', ideal: 4 },
-      { id: 'q3', text: 'Weekend hikes > staying indoors.', ideal: 3 },
-      { id: 'q4', text: 'I love spontaneous road trips.', ideal: 4 },
-      { id: 'q5', text: 'Broccoli is delicious.', ideal: 1 },
+      { id: 'q1', text: 'Open communication and honesty are non-negotiable for me in a relationship.', ideal: 5 },
+      { id: 'q2', text: 'Shared adventures and trying new experiences keep things exciting.', ideal: 4 },
+      { id: 'q3', text: 'Quality time together matters more to me than big gestures.', ideal: 5 },
+      { id: 'q4', text: 'I enjoy balancing personal goals with building something as a team.', ideal: 4 },
+      { id: 'q5', text: 'Being able to laugh together every day is essential.', ideal: 3 },
     ];
 
     // Thresholds for the closing remark (Req 1/3)
     const THRESHOLDS = Object.freeze({
-      TRUE_LOVE: 85,
-      FRIEND: 60,
+      TRUE_LOVE: 90,
+      FRIEND: 70,
       RUN_AWAY: 0
     });
 
@@ -175,7 +175,7 @@
         wrap.className = 'q';
         wrap.id = `wrap-${q.id}`;
         wrap.innerHTML = `
-          <div class="q-title">${idx+1}. ${q.text} <span aria-hidden="true" title="Ideal answer">(❤ ideal: ${q.ideal})</span></div>
+          <div class="q-title">${idx+1}. ${q.text}</div>
           <div class="controls">
             <input aria-label="${q.text}" type="range" min="1" max="5" step="1" value="3" id="${q.id}" name="${q.id}">
             <span class="value-badge" id="badge-${q.id}">3</span>
@@ -233,9 +233,9 @@
     }
 
     function closingRemark(score){
-      if(score >= THRESHOLDS.TRUE_LOVE) return { text: `TRUE LOVE! ${String.fromCodePoint(0x1F60D)} We\'re cosmic!`, cls: 'love' };
-      if(score >= THRESHOLDS.FRIEND) return { text: `Friends with potential ${String.fromCodePoint(0x1F60A)} Coffee first?`, cls: 'friend' };
-      return { text: `Run away! ${String.fromCodePoint(0x1F3C3)} Maybe we keep this strictly Wi‑Fi.`, cls: 'run' };
+      if(score >= THRESHOLDS.TRUE_LOVE) return { text: `TRUE LOVE! 😍 Espresso + a Chi‑town food crawl to celebrate?`, cls: 'love' };
+      if(score >= THRESHOLDS.FRIEND) return { text: `Friends with potential 🙂 Coffee + a quick build session?`, cls: 'friend' };
+      return { text: `Run away! 🏃 Maybe we keep it to high‑fives and bug reports.`, cls: 'run' };
     }
 
     // =============================
